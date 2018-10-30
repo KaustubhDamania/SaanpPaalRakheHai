@@ -1,0 +1,29 @@
+﻿To install:
+pip install pygame
+or 
+pip3 install pygame
+
+
+Importing pygame:
+>>>import pygame
+>>>pygame.init()#The first thing to be done after importing.Starts all pygame libraries
+
+Creating a display
+>>>d = pygame.display.set_mode((800,600))#A display window is created width by height
+
+>>>pygame.display.set_caption('NewGame')#Gives title to the window
+Initializing a clock:
+>>>c = pygame.time.Clock()
+Helps us time things properly
+
+Game Loops:
+Where you check for user input ,  process it provide some sort of output
+for each individual frame when the game is running.
+Game’s main logic will be included in the loop.
+Events:
+Events are the all the things user can use to provide input,
+such as mouse click, double click, scroll over, key presses etc.
+
+
+Image Sprites used from:
+http://spritedatabase.net/game/2362

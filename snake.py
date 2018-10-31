@@ -39,7 +39,7 @@ pygame.init()
 gameDisplay = pygame.display.set_mode((width,height))
 clock = pygame.time.Clock()
 downarrow=uparrow=leftarrow=rightarrow=False
-arrow_key = [pygame.K_DOWN,pygame.K_UP,pygame.K_LEFT,pygame.K_RIGHT]
+arrow_key = [pygame.K_DOWN,pygame.K_UP,pygame.K_LEFT,pygame.K_RIGHT] #list of all keys required
 
 #game loop
 while True:
@@ -88,7 +88,7 @@ while True:
     while [new_food_x,new_food_y] in snakeList:
         new_food_x = random.randint(0,width-blockSize)
         new_food_y = random.randint(0,height-blockSize)
-
+    #render the snake
     snake_run(blockSize,snakeList)
 
     if([init_food_x,init_food_y]==snakeHead): #food is eaten by snake

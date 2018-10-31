@@ -1,79 +1,103 @@
-import pygame,sys,random
-from pygame.locals import *
+import pygame
 import time
 import random
-def move_food(x,y,a,b): #moves food from x,y to a,b
-    pygame.draw.rect(gameDisplay,black,(x,y,blockSize,blockSize))
-    pygame.draw.rect(gameDisplay,red,(a,b,blockSize,blockSize))
+import math
+from pygame.locals import *
 
-def snake(blockSize,snakeHead):
-    pygame.draw.rect(gameDisplay, white, (snakeHead[0],snakeHead[1],blockSize,snakeLength))
+def displaySnake(snakeList):
+    for coordinate in snakeList:
+        pygame.draw.rect(gameDisplay,white,(coordinate[0],coordinate[1],10,10))
 
-w_width = 800
-w_height = 600
-white=(255,255,255)
-black=(0,0,0)
-red=(255,0,0)
-FPS=3
-blockSize=10
-init_x = random.randint(0,w_height)
-init_y = random.randint(0,w_width)
-snakeList=[]
-snakeLength=10
-snakeHead = [0,0] #snakehead starting coordinate, update this
+def snake_init(snakeHead):
+    pygame.draw.rect(gameDisplay,white,(snakeHead[0],snakeHead[1],10,snakeLength))
 
+def snake_move(snakeList):
+    for i in range(len(snakeList)-1, 0, -1):
+        snakeList[i] = snakeList[i-1].copy()
 
+def changeFood(init_food_x,init_food_y,new_food_x,new_food_y):
+    pygame.draw.rect(gameDisplay,black,(init_food_x,init_food_y,10,10))
+    pygame.draw.rect(gameDisplay,red,(new_food_x,new_food_y,10,10))
 
-
-pygame.init()
-gameDisplay = pygame.display.set_mode((w_width,w_height))
-check=True
+FPS = 30
+width = 800
+height = 600
+black = (0,0,0)
+white = (255,255,255)
+red = (255,0,0)
 clock = pygame.time.Clock()
-#event=[pygame.K_DOWN]
-#for _ in range(1):
+#snakeHead = [math.floor(random.randint(0,width)/10)*10,math.floor(random.randint(0,height)/10)*10]
+snakeHead = [60,60]
+snakeLength = 10
+snakeList=[]
+snakeList.append(snakeHead)
+init_food_x = 100
+init_food_y = 100
 
-downarrow= False
-leftarrow= False
-rightarrow= False
-uparrow= False
-new_x = random.randrange(0,w_width,10)
-new_y = random.randrange(0,w_height,10)
+downarrow = False
+uparrow = False
+rightarrow = False
+leftarrow = False
+pygame.init()
+gameDisplay = pygame.display.set_mode((width,height))
+arrow_key = [pygame.K_DOWN,pygame.K_UP,pygame.K_LEFT,pygame.K_RIGHT]
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            sys.exit()
+            pygame.quit()
+            quit()
 
-        if event.type==pygame.KEYDOWN:
-            downarrow= event.key== pygame.K_DOWN
-            leftarrow= event.key== pygame.K_LEFT
-            rightarrow= event.key==pygame.K_RIGHT
-            uparrow= event.key==pygame.K_UP
 
-    if downarrow and snakeHead[1] < w_height:
-        snakeHead[1]+=blockSize
-    elif uparrow and snakeHead[1] > 0:
-        snakeHead[1]-=blockSize
-    elif leftarrow and snakeHead[0] > 0:
-        snakeHead[0]-=blockSize
-    elif rightarrow and snakeHead[0] < w_width:
-        snakeHead[0]+=blockSize
+        if event.type == pygame.KEYDOWN:
+            if event.key in arrow_key:
+                downarrow = event.key == pygame.K_DOWN
+                uparrow = event.key == pygame.K_UP
+                rightarrow = event.key == pygame.K_RIGHT
+                leftarrow = event.key == pygame.K_LEFT
 
+    if downarrow and snakeHead[1]<height:
+        if [snakeHead[0],snakeHead[1]+10] in snakeList:
+            print('Game Over')
+            break
+        snake_move(snakeList)
+        snakeHead[1]+=10
+
+    elif uparrow and snakeHead[1]>0:
+        if [snakeHead[0],snakeHead[1]-10] in snakeList:
+            print('Game Over')
+            break
+        snake_move(snakeList)
+        snakeHead[1]-=10
+
+    elif rightarrow and snakeHead[0]<width:
+        if [snakeHead[0]+10,snakeHead[1]] in snakeList:
+            print('Game Over')
+            break
+        snake_move(snakeList)
+        snakeHead[0]+=10
+
+    elif leftarrow and snakeHead[0]>0:
+        if [snakeHead[0]-10,snakeHead[1]] in snakeList:
+            print('Game Over')
+            break
+        snake_move(snakeList)
+        snakeHead[0]-=10
 
     gameDisplay.fill((0,0,0))
-    pygame.draw.rect(gameDisplay,red,(new_x,new_y,blockSize,blockSize))
-    #update check when snake head coordinate = init_x,init_y
-    check = snakeHead == [new_x, new_y]
-    print(check)
-    print()
+    pygame.draw.rect(gameDisplay,red,(init_food_x,init_food_y,10,10))
 
-    if check:
-        move_food(init_x,init_y,new_x,new_y)
-        init_x, init_y = new_x, new_y
-        snakeLength+=10
-        new_x = random.randrange(0,w_width,10)
-        new_y = random.randrange(0,w_height,10)
+    new_food_x = math.floor(random.randint(0,width)/10)*10
+    new_food_y = math.floor(random.randint(0,height)/10)*10
+    while [new_food_x,new_food_y] in snakeList:
+        new_food_x = math.floor(random.randint(0,width)/10)*10
+        new_food_y = math.floor(random.randint(0,height)/10)*10
 
-    snake(blockSize,snakeHead)
+    displaySnake(snakeList)
+    if ([init_food_x,init_food_y] == snakeHead):
+        snakeList.append([init_food_x,init_food_y])
+        snakeHead = snakeList[0]
+        changeFood(init_food_x,init_food_y,new_food_x,new_food_y)
+        init_food_x,init_food_y = new_food_x,new_food_y
 
     pygame.display.update()
     clock.tick(FPS)

@@ -1,2 +1,2 @@
 # SaanpPaalRakheHai
-No description required xP
+Snake and Pong game built using Pygame
